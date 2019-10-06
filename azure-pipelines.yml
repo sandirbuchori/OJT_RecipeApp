@@ -1,0 +1,25 @@
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+steps:
+- task: DotNetCoreInstaller@0
+  displayName: 'Use .NET Core SDK 2.1.505'
+  inputs:
+    version: 2.1.505
+
+- script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
+  displayName: 'Write build info'
+  workingDirectory: RecipeApplication/wwwroot
+
+- task: DotNetCoreCLI@2
+  displayName: 'Restore project dependencies'
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build the project - Release'
+  inputs:
+    command: 'build'
+    arguments: '--no-restore --configuration Release'
+    projects: '**/*.csproj'
